@@ -1,0 +1,802 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<security xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="security.xsd">
+    <urls authentication="required" prefix="/dcapi/inventory/computers">
+        <url path="/" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="computerName" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+        <url path="/warranties" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/customFields/import" method="POST" operation-type="write" roles="Inventory_Admin">
+            <file antivirus="true" name="computerCustomFieldFile" max-size="65536" allowed-extensions="csv">
+                <filename regex="uploadedFileName" max-len="230"/>
+            </file>
+        </url>
+        <url path="/customFields/update" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" max-len="-1" template="customFieldsUpdateTemplate"/>
+        </url>
+        <url path="/scan" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" max-len="-1" template="scanAllTemplate"/>
+        </url>
+        <url path="/scan/stop" method="POST" operation-type="write" roles="Inventory_Admin"/>
+        <url path="/scan/isWanComputer" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" max-len="-1" template="scanTemplate"/>
+        </url>
+        <url path="/scan/status" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" max-len="-1" template="scanTemplate"/>
+        </url>
+        <url path="/services" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="offset" type="int"/>
+            <param name="limit" type="int"/>
+        </url>
+        <url path="/groups" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="offset" type="int"/>
+            <param name="limit" type="int"/>
+        </url>
+        <url path="/certificates" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="offset" type="int"/>
+            <param name="limit" type="int"/>
+        </url>
+    </urls>
+    <urls authentication="required" prefix="/dcapi/inventory/computers/[0-9]+" path-regex="true">
+        <url path="/productNumber" method="PUT" operation-type="write" path-regex="true" roles="Inventory_Admin">
+            <param name="productNumber" regex="od_cleartextpattern"/>
+        </url>
+        <url path="/scanWarranty" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/scanComputer" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/scanStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/scanInProgress" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/agentUpgradeInProgress" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/summary" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/generalSummary" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/assetSummary" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/osInformation" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/availableHardware" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/hardwareSummary" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/diskUsageSummary" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/[A-Za-z]+" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/hardware" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/bitlocker" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/bitLockerRecoveryKey" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="driveName" regex="safestring"/>
+        </url>
+        <url path="/antivirus" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/macFirewall" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/macFileVault" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/firewall" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/security" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/service" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="serviceID" type="long"/>
+        </url>
+        <url path="/user" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="userID" type="long"/>
+        </url>
+        <url path="/share/permissions" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="shareID" type="long"/>
+        </url>
+        <url path="/group" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="groupID" type="long"/>
+        </url>
+        <url path="/scanHistory" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/history" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="auditID" type="long"/>
+        </url>
+        <url path="/fileScanDetails" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/alertMessage" method="DELETE" operation-type="write" roles="Inventory_Admin">
+            <param name="alertType" regex="safestring"/>
+        </url>
+        <url path="/customFields" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/groups" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/usbAudit/count" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/certificate/storeScanStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/modernManagementDetails" method="GET" operation-type="read" roles="Inventory_Read"/>
+    </urls>
+    <urls authentication="required" prefix="/dcapi/inventory/hardware">
+        <url path="/[0-9]+" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+    </urls>
+
+    <urls authentication="required" prefix="/dcapi/inventory/software">
+        <url path="/" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="softwareName" type="String"/>
+            <param name="softwareType" regex="[0-3]"/>
+            <param name="osType" regex="[Mm]ac|[Ww]indows|[lL]inux|[aA]ll"/>
+            <param name="offset" type="int"/>
+            <param name="limit" type="int"/>
+            <param name="filter" regex="unlicensed|ungrouped|uncategorized"/>
+        </url>
+
+        <url path="/listAll" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <!--Start of Prohibit SW-->
+
+        <url path="/prohibit" method="POST,DELETE" roles="Inventory_Admin" operation-type="write">
+            <inputstream type="JSONObject" template="ProhibitSWTemplate" max-len="-1"/>
+        </url>
+        <url path="/prohibit/exclusions" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="softwareID" type="long"/>
+            <param name="exclusionType" regex="customGroup|computers"/>
+            <param name="domainID" type="long"/>
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+        <url path="/prohibit/exclusions" method="PUT" operation-type="write" roles="Inventory_Read">
+            <param name="softwareID" type="long"/>
+            <inputstream type="JSONObject" template="saveExclusionsTemplate" max-len="-1"/>
+        </url>
+        <url path="/prohibit/exclusions/domains" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/prohibit/excludedResources" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="softwareID" type="long"/>
+        </url>
+        <url path="/prohibit/emailAlerts" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/prohibit/emailAlerts/sendTestMail" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ProhibitTestMailTemplate" max-len="-1"/>
+        </url>
+        <url path="/prohibit/emailAlerts" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="updateEmailAlertTemplate" max-len="-1"/>
+        </url>
+        <url path="/prohibit/autoUninstallPolicy" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/prohibit/systemsWithSoftware" method="PUT" operation-type="write" roles="Inventory_Read"/>
+
+        <url path="/prohibit/autoUninstallPolicy" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="updateAutoInstallPolicyTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/prohibit/userRequest" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="softwareID" type="long"/>
+            <param name="resourceID" type="long"/>
+        </url>
+
+        <url path="/prohibit/userRequest" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="softwareID" type="long"/>
+            <param name="resourceID" type="long"/>
+            <inputstream type="JSONObject" template="userReqTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/prohibit/messageBox" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <!--End of Prohibit SW-->
+
+        <!--Start of Metering-->
+
+        <url path="/metering/rules" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+
+        <url path="/metering/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/metering" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="swMeteringRuleTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/metering/[0-9]{1,20}" method="PUT" operation-type="write" path-regex="true" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="swMeteringRuleTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/metering/[0-9]{1,20}/disable" path-regex="true" method="POST" operation-type="write" roles="Inventory_Admin" />
+
+        <url path="/metering/[0-9]{1,20}/enable" method="POST" operation-type="write" path-regex="true" roles="Inventory_Admin" />
+        <url path="/metering/[0-9]{1,20}" path-regex="true" method="DELETE" operation-type="write" roles="Inventory_Admin"/>
+
+
+        <url path="/metering/disable" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+        <url path="/metering/enable" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+        <url path="/metering" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+
+        <!--End of Metering-->
+
+        <url path="/recentInstallation" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="limit" type="int" default="5"/>
+        </url>
+
+        <url path="/summary" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/[0-9]{1,20}/silentSwitches" method="GET" operation-type="read" roles="Inventory_Read" path-regex="true">
+            <param name="softwareInstalledID" type="long"/>
+        </url>
+
+        <url path="/[0-9]+/silentSwitches" path-regex="true" method="PUT" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="silentSwitchTemplate" max-len="-1"/>
+        </url>
+        <url path="/[0-9]+/uninstall" path-regex="true" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="uninstallTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/licenseType" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="licenseTypeID" type="long"/>
+            <inputstream type="JSONObject" template="licenseUpdateTemplate" max-len="-1"/>
+        </url>
+        <url path="/accessType" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="accessTypeID" type="long"/>
+            <inputstream type="JSONObject" template="licenseUpdateTemplate" max-len="-1" />
+        </url>
+
+
+        <url path="/category" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="softwareCategoryID" type="long"/>
+            <inputstream type="JSONObject" template="licenseUpdateTemplate" max-len="-1" />
+        </url>
+
+        <url path="/softwareCategories" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/[0-9]{1,20}/comment" path-regex="true" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="comment" regex="safestring"/>
+        </url>
+
+        <url path="/softwareMessageBoxInfo" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/category/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/category/[0-9]{1,20}" path-regex="true" method="DELETE" operation-type="write" roles="Inventory_Admin" />
+
+
+        <url path="/category" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="deleteCategoryTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/category" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="addOrUpdateCategoryTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/category/[0-9]{1,20}" path-regex="true" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="addOrUpdateCategoryTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/group/operatingSystem" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/group/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/group" method="POST,PUT" roles="Inventory_Admin" operation-type="write">
+            <inputstream type="JSONObject" template="SoftwareGroupTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/group/[0-9]{1,20}" path-regex="true" method="DELETE" operation-type="write" roles="Inventory_Admin" />
+
+
+        <!--Start of License-->
+
+        <url path="/license" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <param name="selectedComputerList" regex="longwithcomma" max-len="-1"/>
+            <param name="licenseName" regex="safestring" max-len="200" />
+            <param name="softwareName" regex="acceptall" max-len="250" />
+            <param name="softwareManufacturer" regex="safestring" max-len="250" />
+            <param name="softwareVersion" regex="safestring" max-len="255" />
+            <param name="licenseOwner" regex="safestring" max-len="200" />
+            <param name="noOfCopiesPurchased" regex="longvalue" />
+            <param name="licensedTo" regex="safestring" max-len="200" />
+            <param name="purchasedDate" regex="^\w{2}\/\w{2}\/\w{4}$" max-len="200" />
+            <param name="expiryDate" regex="^\w{2}\/\w{2}\/\w{4}$" max-len="200" />
+            <param name="licenseKey" regex="safestring" max-len="200" />
+            <param name="remarks" regex="safestring" max-len="2000" />
+            <file max-size="102400" name="licenseFile"/>
+            <file max-size="102400" name="invoiceFile"/>
+        </url>
+        <url path="license/import" method="POST" operation-type="write" roles="Inventory_Admin">
+            <file antivirus="true" name="csvFile" max-size="65536" allowed-extensions="csv"
+                  content-type-name="multipart/form-data">
+                <filename regex="uploadedFileName" max-len="230"/>
+            </file>
+        </url>
+        <url path="/license" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="licenseTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/license/associate" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="status" regex="safestring"/>
+            <param name="softwareID" regex="longvalue"/>
+            <param name="searchString" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+
+        <url path="/[0-9]{1,20}/license/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/[0-9]{1,20}/license/[0-9]{1,20}/file" path-regex="true" method="DELETE" operation-type="write" roles="Inventory_Admin">
+            <param name="fileType" regex="safestring" />
+        </url>
+
+        <url path="/[0-9]{1,20}/license/[0-9]{1,20}/file" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/[0-9]{1,20}/license" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/[0-9]{1,20}/license/[0-9]{1,20}" path-regex="true" method="PUT" operation-type="write" roles="Inventory_Admin">
+            <param name="selectedComputerList" regex="longwithcomma" max-len="-1"/>
+            <param name="licenseName" regex="safestring" max-len="200" />
+            <param name="softwareName" regex="acceptall" max-len="250" />
+            <param name="softwareManufacturer" regex="safestring" max-len="250" />
+            <param name="softwareVersion" regex="safestring" max-len="255" />
+            <param name="licenseOwner" regex="safestring" max-len="200" />
+            <param name="noOfCopiesPurchased" regex="longvalue" />
+            <param name="licensedTo" regex="safestring" max-len="200" />
+            <param name="purchasedDate" regex="^\w{2}\/\w{2}\/\w{4}$" max-len="200" />
+            <param name="expiryDate" regex="^\w{2}\/\w{2}\/\w{4}$" max-len="200" />
+            <param name="licenseKey" regex="safestring" max-len="200" />
+            <param name="remarks" regex="safestring" max-len="2000" />
+            <file max-size="102400" name="licenseFile"/>
+            <file max-size="102400" name="invoiceFile"/>
+        </url>
+        <!--End of License-->
+    </urls>
+
+    <!--Start  of FileScan-->
+
+    <urls authentication="required" prefix="/dcapi/inventory/fileScanRules">
+
+        <url path="/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/[0-9]{1,20}" path-regex="true" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="fileScanRuleTemplate" max-len="-1"/>
+        </url>
+        <url path="/" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="fileScanRuleTemplate" max-len="-1"/>
+        </url>
+        <url path="/[0-9]{1,20}/disable" path-regex="true" method="POST" operation-type="write" roles="Inventory_Admin" />
+        <url path="/[0-9]{1,20}/enable" path-regex="true" method="POST" operation-type="write" roles="Inventory_Admin" />
+        <url path="/[0-9]{1,20}" path-regex="true" method="DELETE" operation-type="write" roles="Inventory_Admin" />
+
+        <url path="/disable" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+        <url path="/enable" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+        <url path="/" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ruleListTemplate" max-len="-1"/>
+        </url>
+        <url path="/nextScheduledTime" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/rules" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/extensions" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+    </urls>
+    <!--End of FileScan-->
+
+
+    <!--Start of Inventory Controller-->
+
+    <urls authentication="required" prefix="/dcapi/inventory">
+
+        <url path="/bitlockers/[0-9]{1,20}" path-regex="true" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/generateInventoryHomeSummary" method="POST" operation-type="write" roles="Inventory_Admin" />
+        <url path="/summaryGenerationStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/fileScanConfigured" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/inventoryScan" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/alertMessage" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <param name="alertType" regex="safestring" max-len="30"/>
+        </url>
+
+        <url path="/scanSettings" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/scanSettings" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="ScanSettingsTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/usbAuditTrackingEnableStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+
+        <url path="/softwareMeteringSettings" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/softwareMeteringSettings/[a-zA-Z]+" path-regex="true" method="POST" operation-type="write" roles="Inventory_Admin"/>
+
+        <url path="/scheduleScan/nextExecutionTime" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+
+        <url path="/scheduleScan" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="scanType" regex="safestring"/>
+        </url>
+        <url path="/scheduleScan/isConfigured" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+        <url path="/scheduleScan/enable" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+        <url path="/scheduleScan/disable" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+        <url path="/scheduleScan" method="DELETE" operation-type="write" roles="Inventory_Admin" >
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+        <url path="/scheduleScan" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="scheduleScanTemplate" max-len="-1"/>
+            <param name="scanType" regex="safestring"/>
+        </url>
+
+        <url path="/scheduleScan" method="POST" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="scheduleScanTemplate" max-len="-1"/>
+            <param name="scanType" regex="safestring"/>
+        </url>
+        <url path="/customReports" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/configureAlerts" method="GET" operation-type="read" roles="Inventory_Read"/>
+
+        <url path="/configureAlerts" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <inputstream type="JSONObject" template="configureAlertsTemplate" max-len="-1"/>
+        </url>
+
+        <url path="/mailServerStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/helpDeskRequestStatus" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/customGroups" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="customGroupName" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+
+
+    </urls>
+    <!--End of Inventory Controller-->
+
+    <!--Start of Inventory Alert History Configuration-->
+    <urls prefix="dcapi/inventory/alerts" authentication="required">
+        <url path="historyDuration" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="historyDuration" method="PUT" operation-type="write" roles="Inventory_Admin" >
+            <param name="duration" regex="^[0-9]{1,4}"/>
+        </url>
+    </urls>
+    <!--End of Inventory Alert History Configuration-->
+
+    <!--Start of Inventory Block EXE -->
+    <urls prefix="dcapi/inventory/block" authentication="required">
+        <url path="/" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="BlockExeTemplate" max-len="-1"/>
+        </url>
+        <url path="/[0-9]+" method="PUT" operation-type="write" path-regex="true" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="BlockExeTemplate" max-len="-1"/>
+        </url>
+        <url path="/[0-9]+" method="DELETE" operation-type="write" path-regex="true" roles="Inventory_Admin"/>
+        <url path="/" method="DELETE" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="BlockExeDeleteTemplate" max-len="-1"/>
+        </url>
+        <url path="/messageForNewPolicy" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/firstPolicy" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/customGroups" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="customGroupName" regex="od_cleartextpattern"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+        <url path="/navigationProperties" method="GET" operation-type="read" roles="Inventory_Read"/>
+        <url path="/executables" method="GET" operation-type="read" roles="Inventory_Read">
+            <param name="applicationName" regex="safestring"/>
+            <param name="blockMethod" regex="safestring"/>
+            <param name="limit" type="int"/>
+            <param name="offset" type="int"/>
+        </url>
+        <url path="/[0-9]+/details" method="GET" operation-type="read" path-regex="true" roles="Inventory_Read"/>
+        <url path="/[0-9]+/policyExists" method="GET" operation-type="read" path-regex="true" roles="Inventory_Read"/>
+        <url path="/isExecutablePresent" method="POST" operation-type="write" roles="Inventory_Admin">
+            <inputstream type="JSONObject" template="ExecutableCheckTemplate" max-len="-1"/>
+        </url>
+
+    </urls>
+    <!--End of Inventory Block EXE-->
+
+
+    <jsontemplates>
+        <jsontemplate name="ProhibitSWTemplate">
+            <key name="softwareIDs" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="saveExclusionsTemplate">
+            <key name="computers" type="JSONArray" template="exComputerTemplate" max-len="-1"/>
+            <key name="customGroups" type="JSONArray" template="exCGTemplate" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="exComputerTemplate">
+            <key name="computerID" regex="longvalue"/>
+            <key name="domainID" regex="longvalue"/>
+        </jsontemplate>
+        <jsontemplate name="exCGTemplate">
+            <key name="customGroupID" regex="longvalue"/>
+            <key name="domainID" regex="longvalue"/>
+        </jsontemplate>
+        <jsontemplate name="ProhibitTestMailTemplate">
+            <key name="adminEmail" regex="emailstring" min-occurrences="1" max-len="-1"/>
+            <key name="emailSubject" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="emailMessage" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="adminMailEnabled" type="boolean" min-occurrences="1"/>
+            <key name="senderName" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="updateEmailAlertTemplate">
+            <key name="adminMailDetails" type="JSONObject" template="mailDetailsTemplate" max-len="-1"/>
+            <key name="userMailDetails" type="JSONObject" template="userMailDetailsTemplate" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="mailDetailsTemplate">
+            <key name="sendEmailTo" regex="emailstring" min-occurrences="1" max-len="-1"/>
+            <key name="subject" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="senderName" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="message" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="emailEnabled" type="boolean" min-occurrences="1"/>
+        </jsontemplate>
+        <jsontemplate name="userMailDetailsTemplate">
+            <key name="sendEmailTo" regex="ad|manual" min-occurrences="1" max-len="-1"/>
+            <key name="subject" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="senderName" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="message" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="emailEnabled" type="boolean" min-occurrences="1"/>
+        </jsontemplate>
+        <jsontemplate name="updateAutoInstallPolicyTemplate">
+            <key name="enableAutoUninstallation" regex="booleanandnull"/>
+            <key name="enableNativeAlert" regex="booleanandnull"/>
+            <key name="nativeUninstallMessage" regex="safestring" max-len="-1"/>
+            <key name="noOfDaysToWaitToUninstall" regex="longvalue"/>
+            <key name="startupUninstallSoftwareCount" regex="longvalue"/>
+        </jsontemplate>
+        <jsontemplate name="userReqTemplate">
+            <key name="comments" max-len="-1" regex="safestring"/>
+            <key name="approvalStatus" max-len="-1" regex="safestring"/>
+        </jsontemplate>
+        <jsontemplate name="swMeteringRuleTemplate">
+            <key name="fileVersion" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="originalFileName" regex="od_cleartextpattern" max-len="-1"/>
+            <key name="productName" regex="od_cleartextpattern" max-len="-1"/>
+            <key name="comments" regex="od_cleartextpattern" max-len="-1"/>
+            <key name="ruleName" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="fileName" regex="od_cleartextpattern" min-occurrences="1" max-len="-1"/>
+            <key name="swName" regex="od_cleartextpattern" max-len="-1"/>
+            <key name="softwareID" type="long" min-occurrences="1"/>
+        </jsontemplate>
+        <jsontemplate name="ruleListTemplate">
+            <key name="ruleID" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="silentSwitchTemplate">
+            <key name="silentSwitches" regex="safestring"/>
+            <key name="updatedMode" type="int"/>
+        </jsontemplate>
+        <jsontemplate name="uninstallTemplate">
+            <key name="resourceIDs" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="licenseUpdateTemplate">
+            <key name="softwareIDs" regex="longwithcomma" max-len="-1" min-occurrences="1"/>
+        </jsontemplate>
+        <jsontemplate name="deleteCategoryTemplate">
+            <key name="categoryID" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="addOrUpdateCategoryTemplate">
+            <key name="softwareIDs" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+            <key name="categoryName" regex="safestring" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="SoftwareGroupTemplate">
+            <key name="childSWIDs" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+            <key name="parentSoftwareID" regex="longwithcomma" min-occurrences="1" max-len="-1"/>
+            <key name="enableAutoGroup" type="boolean" min-occurrences="1"/>
+            <key name="versionRegex" regex="safestring" min-occurrences="1" max-len="-1"/>
+            <key name="groupName" regex="safestring" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="licenseTemplate">
+            <key name="softwareID" regex="longvalue" min-occurrences="1"/>
+            <key name="licenseDetailsID" type="JSONArray" template="stringArray" min-occurrences="1"
+                 max-len="-1"/>
+        </jsontemplate>
+
+        <!--Start of File Scan Templates-->
+        <jsontemplate name="fileScanRuleTemplate">
+            <key name="ruleName" regex="safestring" min-occurrences="1" max-len="-1"/>
+            <key name="fileExtensions" regex="safestring" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+        <!--End of File Scan Templates-->
+
+        <!--Start of Inventory Controller Templates-->
+        <jsontemplate name="ScanSettingsTemplate">
+            <key name="components" type="JSONArray" template="scanSettingsComponent" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="scanSettingsComponent">
+            <key name="componentName" regex="safestring" min-occurrences="1" max-len="-1"/>
+            <key name="componentID" type="long" min-occurrences="1"/>
+            <key name="isEnabled" type="boolean" min-occurrences="1"/>
+            <key name="subComponents" type="JSONArray" template="ScanSettingsubComponent" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="ScanSettingsubComponent">
+            <key name="subComponentID" type="long" min-occurrences="1"/>
+            <key name="subComponentName" regex="safestring" min-occurrences="1" max-len="-1"/>
+            <key name="values" type="JSONArray" template="storeNameTemplate" min-occurrences="1"  max-len="-1" json-array-size="1-20"/>
+        </jsontemplate>
+
+        <jsontemplate name="storeNameTemplate">
+            <key name="storeID" type="long" min-occurrences="1"/>
+            <key name="storeName" regex="safestring" min-occurrences="1" max-len="100"/>
+            <key name="isEnabled" type="boolean" min-occurrences="1"/>
+        </jsontemplate>
+
+        <jsontemplate name="scheduleScanTemplate">
+            <key name="scheduleType" regex="Once|Daily|Weekly|Monthly" />
+            <key name="dailyIntervalType" regex="everyDay|alternativeDays|weekDays" max-len="1000"/>
+            <key name="isOnceScheduleReq" type="boolean" />
+            <key name="schedulerDisabled" type="boolean"/>
+            <key name="dailyTime" regex="timeformat_dd_mm_yyyy_mm_ss" />
+            <key name="emailReqInSched" type="boolean" />
+            <key name="removeScheduleReq" type="boolean" />
+            <key name="scheduleTypeExtraText" regex="safestring" />
+            <key name="nextRunTime" regex="safestring" />
+            <key name="startTimeExtraText" regex="safestring" />
+            <key name="onceTime" regex="safestring" />
+            <key name="startTimeText" regex="safestring"/>
+            <key name="monthlyDay" regex="daysinnumber"/>
+            <key name="monthlyTime" regex="timeformat_HH_mm"/>
+            <key name="monthlyPerform" regex="Day|WeekDay"/>
+            <key name="monthlyWeekDay" regex="weekdayinnumber"/>
+            <key name="monthlyWeekNum" regex="weekinnumber"/>
+            <key name="monthsList" regex="multipledigit"/>
+            <key name="daysOfWeek" regex="weekdayinnumber" />
+            <key name="weeklyTime" regex="timeformat_HH_mm" />
+            <key name="notificationEmail" regex="multipleemail"/>
+        </jsontemplate>
+
+        <jsontemplate name="configureAlertsTemplate">
+            <key name="certificate" type="JSONObject" template="certificateAlertTemplate" max-len="-1"/>
+            <key name="diskSpace" type="JSONObject" template="diskSpaceAlertTemplate" max-len="-1"/>
+            <key name="software" type="JSONObject" template="softwareAlertTemplate" max-len="-1"/>
+            <key name="license" type="JSONObject" template="licenseAlertTemplate" max-len="-1"/>
+            <key name="hardware" type="JSONObject" template="hardwareAlertTemplate" max-len="-1"/>
+            <key name="notificationEmail" regex="multipleemail"/>
+        </jsontemplate>
+
+        <jsontemplate name="certificateAlertTemplate">
+            <key name="certificateExpiry" template="certificateExpiryAlertTemplate" type="JSONObject" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="certificateExpiryAlertTemplate">
+            <key name="expiryAlertDays" regex="^[0-9]{1,3}"/>
+            <key name="alertID" type="long"/>
+            <key name="enabled" type="boolean"/>
+            <key name="alertName" regex="safestring" max-len="30"/>
+        </jsontemplate>
+
+        <jsontemplate name="diskSpaceAlertTemplate">
+            <key name="logicalDiskFreeSpace" type="JSONObject" template="commonDiskSpaceAlertTemplate" max-len="-1"/>
+            <key name="hardDiskFreeSpace" type="JSONObject" template="commonDiskSpaceAlertTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="commonDiskSpaceAlertTemplate">
+            <key name="alertID" type="long" min-occurrences="1" max-len="-1"/>
+            <key name="enabled" type="boolean" min-occurrences="1" max-len="-1"/>
+            <key name="alertName" regex="safestring" min-occurrences="1" max-len="30"/>
+            <key name="diskSpace" regex="^[0-9]{1,2}" min-occurrences="1" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="softwareAlertTemplate">
+            <key name="added" type="JSONObject" template="softwareAlertByTypeTemplate" max-len="-1"/>
+            <key name="removed" type="JSONObject" template="softwareAlertByTypeTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="softwareAlertByTypeTemplate">
+            <key name="allSoftware" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="commercialSoftware" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="prohibitedSoftware" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="hardwareAlertTemplate">
+            <key name="added" type="JSONObject" template="hardwareAlertByConfigTemplate" max-len="-1"/>
+            <key name="removed" type="JSONObject" template="hardwareAlertByConfigTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="hardwareAlertByConfigTemplate">
+            <key name="bios" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="parallerPort" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="printer" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="monitor" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="hardwareAdded" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="hardwareRemoved" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="networkAdapter" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="keyboard" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="motherBoard" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="processor" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="mappedLogicalDisk" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="modem" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="logicalPartition" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="soundDevice" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="usbController" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="serialPort" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="cdromDrive" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="pointingDevice" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="battery" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="usbHub" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="videoController" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="pcmciaController" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="ideController" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="hardDisk" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="physicalMemory" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <jsontemplate name="commonAlertConfigTemplate">
+            <key name="alertID" type="long"/>
+            <key name="enabled" type="boolean"/>
+            <key name="alertName" regex="safestring" max-len="30"/>
+        </jsontemplate>
+
+        <jsontemplate name="licenseUsageAlertTemplate">
+            <key name="alertID" type="long"/>
+            <key name="enabled" type="boolean"/>
+            <key name="alertName" regex="safestring" max-len="30"/>
+            <key name="licensePercent" type="int"/>
+        </jsontemplate>
+
+        <jsontemplate name="licenseAlertTemplate">
+            <key name="licenseUsageLimit" type="JSONObject" template="licenseUsageAlertTemplate" max-len="-1"/>
+            <key name="usedAfterExpiry" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+            <key name="underLicense" type="JSONObject" template="commonAlertConfigTemplate" max-len="-1"/>
+        </jsontemplate>
+
+        <!--End of Inventory Controller Templates-->
+
+        <jsontemplate name="customFieldsUpdateTemplate">
+            <key name="expiryDate" regex="^\w{2}\/\w{2}\/\w{4}$"/>
+            <key name="owner" regex="od_cleartextpattern"/>
+            <key name="location" regex="od_cleartextpattern"/>
+            <key name="notes" regex="od_cleartextpattern"/>
+            <key name="searchTag" regex="od_cleartextpattern"/>
+            <key name="productNumber" regex="od_cleartextpattern"/>
+            <key name="ownerEmail" regex="od_cleartextpattern"/>
+            <key name="shippingDate" regex="^\w{2}\/\w{2}\/\w{4}$"/>
+            <key name="resourceIDs" regex="longwithcomma"/>
+        </jsontemplate>
+        <jsontemplate name="scanAllTemplate">
+            <key name="resourceIDs" regex="longwithcomma"/>
+            <key name="domains" regex="od_cleartextpattern"/>
+        </jsontemplate>
+        <jsontemplate name="scanTemplate">
+            <key name="resourceIDs" regex="longwithcomma"/>
+        </jsontemplate>
+
+        <!--Start of Inventory Block Exe Templates-->
+        <jsontemplate name="BlockExeTemplate">
+            <key name="customGroupID" regex="longvalue"/>
+            <key name="policy_id" regex="longvalue"/>
+            <key name="policyDescription" regex="safestring" max-len="-1"/>
+            <key name="existingAppIDs" type="JSONArray" template="stringArray" max-len="-1"/>
+            <key name="newApplications" type="JSONArray" template="applicationTemplate" max-len="-1"/>
+            <key name="deletedAppIDs" type="JSONArray" template="stringArray" max-len="-1"/>
+            <key name="editedApplications" type="JSONArray" template="applicationTemplate" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="stringArray">
+            <key name="IAMArray" regex="longvalue"/>
+        </jsontemplate>
+        <jsontemplate name="applicationTemplate">
+            <key name="applicationID" regex="safestring"/>
+            <key name="applicationName" regex="safestring"/>
+            <key name="applicationVersion" regex="safestring"/>
+            <key name="blockMethod" type="int"/>
+            <key name="lastModifiedTime" regex="safestring"/>
+            <key name="lastModifiedTimeInMs" type="long"/>
+            <key name="pathRuleData" type="JSONObject" template="pathRuleTemplate"/>
+            <key name="hashRuleData" type="JSONObject" template="hashRuleTemplate"/>
+        </jsontemplate>
+        <jsontemplate name="pathRuleTemplate">
+            <key name="path" regex="safestring" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="hashRuleData">
+            <key name="executableName" regex="safestring"/>
+            <key name="fileSize" regex="longvalue"/>
+            <key name="md5Hash" regex="alphanumeric"/>
+            <key name="sha256Hash" regex="alphanumeric"/>
+        </jsontemplate>
+        <jsontemplate name="BlockExeDeleteTemplate">
+            <key name="policyIDs" regex="longwithcomma" max-len="-1"/>
+        </jsontemplate>
+        <jsontemplate name="ExecutableCheckTemplate">
+            <key name="blockMethod" regex="numeric" min-occurrences="1"/>
+            <key name="path" regex="safestring" max-len="-1"/>
+            <key name="md5Hash" regex="alphanumeric"/>
+            <key name="sha256Hash" regex="alphanumeric"/>
+        </jsontemplate>
+        <!--End of Inventory Block Exe Templates-->
+
+    </jsontemplates>
+
+</security>
