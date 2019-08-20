@@ -1,0 +1,131 @@
+{
+	"String": {
+		"validInput" : ["abc","a d"],
+		"invalidInput" : [12,true]
+	},
+	"int": {
+		"validInput" : [12,9990],
+		"invalidInput" : [true,"xyz"]
+	},
+	"boolean": {
+		"validInput" : [true,false],
+		"invalidInput" : [22,"abc"]
+	},
+	"Once|Daily|Weekly|Monthly": {
+		"validInput" : ["Once","Daily"],
+		"invalidInput" : [123,"abc"]
+	},
+	"everyDay|alternativeDays|weekDays": {
+		"validInput" : ["everyDay","weekDays"],
+		"invalidInput" : [123,true]
+	},
+	"weekdayinnumber": {
+		"validInput" : [1,7],
+		"invalidInput" : [8,"abc"]
+	},
+	"multipleemail": {
+		"validInput" : ["abc@xyz.com hello@hello.com", "abc@abc.com"],
+		"invalidInput" : [123,"abc"]
+	},
+	"^\\w{2}\\\/\\w{2}\\\/\\w{4}$": {
+		"validInput" : ["Me/8T/Mum4","pA/h6/4iOa"],
+		"invalidInput" : ["a/b","abc"]
+	},
+	"[Mm]ac|[Ww]indows|[lL]inux|[aA]ll": {
+		"validInput" : ["mac", "All"],
+		"invalidInput" : [123,"MAC"]
+	},
+	"numeric": {
+		"validInput" : [1,7.1],
+		"invalidInput" : [false,"abc"]
+	},
+	"ad|manual": {
+		"validInput" : ["ad","manual"],
+		"invalidInput" : [345,"abc"]
+	},
+	"long": {
+		"validInput" : [2147483649,123456789],
+		"invalidInput" : [8.2,"jkl"]
+	},
+	"safestring": {
+		"validInput" : ["hello","abc"],
+		"invalidInput" : ["j12b",true]
+	},
+	"emailstring": {
+		"validInput" : ["abc@xy.com", "xy12@jkl.com"],
+		"invalidInput" : ["hello", 45]
+	},
+	"^[0-9]{1,3}": {
+		"validInput" : ["123","00"],
+		"invalidInput" : [45678,"abc"]
+	},
+	"timeformat_dd_mm_yyyy_mm_ss": {
+		"validInput" : ["20_08_2019_35_17","10_10_2050_45_59"],
+		"invalidInput" : [45678,"abc"]
+	},
+	"acceptall": {
+		"validInput" : ["123","abc"],
+		"invalidInput" : [""]
+	},
+	"timeformat_HH_mm": {
+		"validInput" : ["20_30","12_45"],
+		"invalidInput" : ["25_00","abc"]
+	},
+	"alphanumeric": {
+		"validInput" : ["ab12c","jkl123"],
+		"invalidInput" : [false,345]
+	},
+	"customGroup|computers": {
+		"validInput" : ["customGroup","computers"],
+		"invalidInput" : ["abc",345]
+	},
+	"multipledigit": {
+		"validInput" : ["12,45,49","25"],
+		"invalidInput" : ["abc",false]
+	},
+	"weekinnumber": {
+		"validInput" : [12,30],
+		"invalidInput" : ["abc",false]
+	},
+	"daysinnumber": {
+		"validInput" : [12,30],
+		"invalidInput" : ["abc",false]
+	},
+	"longwithcomma": {
+		"validInput" : ["123456789,","4114555,"],
+		"invalidInput" : ["abc",1.52]
+	},
+	"longvalue": {
+		"validInput" : [12,3065454],
+		"invalidInput" : ["abc",false]
+	},
+	"unlicensed|ungrouped|uncategorized": {
+		"validInput" : ["unlicensed","ungrouped"],
+		"invalidInput" : ["abc",false]
+	},
+	"od_cleartextpattern": {
+		"validInput" : ["abc","ab12c"],
+		"invalidInput" : [4.12,false]
+	},
+	"^[0-9]{1,4}": {
+		"validInput" : ["642","2"],
+		"invalidInput" : [4.12,false]
+	},
+	"^[0-9]{1,2}": {
+		"validInput" : ["19","0"],
+		"invalidInput" : [1234,"abc"]
+	},
+	"[0-3]": {
+		"validInput" : ["3","0"],
+		"invalidInput" : [99,"abc"]
+	},
+	"booleanandnull": {
+		"validInput" : [true,null],
+		"invalidInput" : [78,"xy"]
+	},
+	"Day|WeekDay": {
+		"validInput" : ["Day","WeekDay"],
+		"invalidInput" : [12,"xyz"]
+	}
+}
+
